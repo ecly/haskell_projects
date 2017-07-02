@@ -16,3 +16,12 @@ addVectors (x1, y1) (x2, y2) = (x1 + x2, y1 + y2)
 -- pattern matching in list comprehension
 xs = [(1,1), (2,2), (3,3)]
 xs' = [a+b | (a,b) <- xs]
+
+-- pattern matching lists generally
+head' [] = error "Can't call head on an empty list, dummy!"  
+head' (x:_) = x  
+
+-- binding entire list
+firstLetterOfWord all@(x:xs) = "First letter of " ++ all ++ " is " ++ [x]
+
+-- guards

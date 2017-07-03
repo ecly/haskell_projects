@@ -1,3 +1,4 @@
+{- Mostly just duplicates as seen at http://learnyouahaskell.com/ -}
 -- read from top down -> order matters
 lucky 7 = "You won" 
 lucky x = "Nice try idiot"

@@ -1,3 +1,4 @@
+{- Mostly just duplicates as seen at http://learnyouahaskell.com/ -}
 -- combining functions
 doubleMe x = x 
 doubleUs x y = doubleMe y + doubleMe x

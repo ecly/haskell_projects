@@ -114,3 +114,75 @@ map' :: (a -> b) -> [a] -> [b]
 map' f xs = foldr (\x acc -> f x : acc) [] xs  
 
 -- right folds are usually used when building up new lists so we avoid appending
+-- also, right folds work on infinite lists but left folds do not
+-- with a right fold you will eventually reach the beginning of the list
+
+
+-- foldr1 and foldl1 assume the acc based on first or last value of given list
+
+-- implementation of standard library functions using fold
+maximum' :: (Ord a) => [a] -> a  
+maximum' = foldr1 (\x acc -> if x > acc then x else acc)  
+    
+reverse' :: [a] -> [a]  
+reverse' = foldl (\acc x -> x : acc) []  
+    
+product' :: (Num a) => [a] -> a  
+product' = foldr1 (*)  
+    
+filter' :: (a -> Bool) -> [a] -> [a]  
+filter' p = foldr (\x acc -> if p x then x : acc else acc) []  
+    
+head' :: [a] -> a  
+head' = foldr1 (\x _ -> x)  
+    
+last' :: [a] -> a  
+last' = foldl1 (\_ x -> x)  
+
+
+--scanl and scanr is like fold except all intermediate values are stored in the output aswell
+-- ghci> scanr (+) 0 [3,5,2,1]  
+-- ghci> [11,8,3,1,0]  
+
+
+-- using $ for precedence
+-- square root of (3+4+9)
+thatsNotRight = sqrt 3 + 4 + 9
+whatWeWant = sqrt (3 + 4 + 9)
+coolWayToGetIt = sqrt $ 3 + 4 + 9
+
+
+-- function composition
+-- (.) :: (b -> c) -> (a -> b) -> a -> c  
+-- f . g = \x -> f (g x)  
+
+-- making all values negative 
+sillyWayWithLambda = map (\x -> negate (abs x)) [5,-3,-6,7,-3,2,-19,24]  
+coolWayWithFunctionComposition = map (negate . abs) [5,-3,-6,7,-3,2,-19,24]  
+
+-- function composition is right associative (if that wasn't clear already)
+-- meaning f (g (z x)) == (f . g . z) x
+
+-- function composition with more than one parameter???
+letsChangeThis = sum (replicate 5 (max 6.7 8.9))
+functionComposition = (sum . replicate 5 . max 6.7) 8.9
+functionComposition' = sum . replicate 5 . max 6.7 $ 8.9
+
+letsChangeThis' = replicate 100 (product (map (*3) (zipWith max [1,2,3,4,5] [4,5,6,7,8])))
+composed = replicate 100 . product . map (*3) . zipWith max [1,2,3,4,5] $ [4,5,6,7,8]
+
+
+-- point free style / implicit params / currying
+-- below are identical
+fn x = ceiling (negate (tan (cos (max 50 x))))  
+fn' = ceiling . negate . tan . cos . max 50  
+
+-- when function composition gets out of hand!
+oddSquareSum = sum (takeWhile (<10000) (filter odd (map (^2) [1..])))   
+oddSquareSum' = sum . takeWhile (<10000) . filter odd . map (^2) $ [1..]  
+
+-- now in a readable fashion!
+oddSquareSumReadable =   
+    let oddSquares = filter odd $ map (^2) [1..]  
+        belowLimit = takeWhile (<10000) oddSquares  
+    in  sum belowLimit  

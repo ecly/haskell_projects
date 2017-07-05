@@ -63,3 +63,54 @@ largestDivisible = head [x | x <- [100000,99999..], x `mod` 3829 == 0 ]
 largestDivisible' :: (Integral a) => a  
 largestDivisible' = head (filter p [100000,99999..])  
     where p x = x `mod` 3829 == 0  
+
+-- find the sum of all odd squares that are smaller than 10,000
+
+-- using takeWhile
+sumOfOddSquares = sum (takeWhile (<10000) (filter odd (map (^2) [1..])))
+
+-- using list comprehension
+sumOfOddSquares' = sum (takeWhile (<10000) [n^2 | n <- [1..], odd (n^2)])  
+
+-- applying partial multiplication in nested list comprehension
+multiplyBy = map (*) [0..]
+nestedListComprehensions = take 5 [[x y | y <- [0,1] ] | x <- multiplyBy]
+
+
+-- using lambdas 
+listsLongerThan1 = filter (\xs -> length xs > 1) [[1], [1,2]]
+
+
+-- example of silly lambda situation
+-- why would we use lambda for something that partial functions can do
+badLambda = map (\x -> x + 3) [1,6,3,2]
+
+thisIsSmarter = map (+3) [1,6,3,2]
+
+
+-- pattern matching in lambda
+-- NOTE -> runtime error if pattern matching in lambda fails
+patternMatchingLambda = map (\(a,b) -> a + b) [(1,2),(3,5),(6,3),(2,6),(2,5)] 
+
+
+-- lambda and currying -> below 2 functions are equivalent
+addThree x y z = x + y + z  
+addThree' = \x -> \y -> \z -> x + y + z
+
+
+-- folding in haskell
+-- foldl folds from the left
+sum' :: (Num a) => [a] -> a  
+sum' xs = foldl (\acc x -> acc + x) 0 xs  
+
+-- writing foldl sum more succintly using curryings
+-- note xs param can be omitted as sum'' wil return a function that takes a list
+sum'' :: (Num a) => [a] -> a  
+sum'' = foldl (+) 0  
+
+-- right fold!
+-- accumulator on the right and input list on the left (in contrast to foldl)
+map' :: (a -> b) -> [a] -> [b]  
+map' f xs = foldr (\x acc -> f x : acc) [] xs  
+
+-- right folds are usually used when building up new lists so we avoid appending

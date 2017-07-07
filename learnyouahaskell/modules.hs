@@ -47,3 +47,21 @@ sumSum = sum $ takeWhile (<10000) $ map (^3) [1..]
 -- when does fst go beyond 1000 for the first time
 stock = [(994.4,2008,9,1),(995.2,2008,9,2),(999.2,2008,9,3),(1001.4,2008,9,4),(998.3,2008,9,5)]  
 answer = head (dropWhile (\(val,y,m,d) -> val < 1000) stock)
+
+
+-- search for sublists
+returnsTrue = "cat" `isInfixOf` "im a cat burglar"  
+returnsFalse = "Cat" `isInfixOf` "im a cat burglar"  
+
+-- similiarly exists isPrefixOf and isSuffixOf
+-- behaving like StartsWith and EndsWith
+
+
+-- partions splits a list into a tuple of lists.
+-- one containing the elements that satisfy the predicate and one that does not
+splitThisListBaby = partition (>3) [1,3,5,6,3,2,1,0,3,7]  
+-- result: ([5,6,7],[1,3,3,2,1,0,3])  
+
+-- find returns a Maybe with the first occurence of elemenet satisfying predicate
+fourQuestionMark = find (>4) [1,2,3,4,5,6]  
+-- Just 5

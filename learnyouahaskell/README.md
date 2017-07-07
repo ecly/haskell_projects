@@ -1,0 +1,1 @@
+Mostly just notes and examples from reading learnyouahaskell.com

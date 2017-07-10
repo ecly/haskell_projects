@@ -5,6 +5,14 @@ import Data.List (sort)
 import qualified Data.Array 
 -- qualified import means we have to call functions like Data.Array.sort
 
+import qualified Data.Map as Map -- abbreviation
+import qualified Data.Set as Set -- abbreviation
+
+import Data.Char
+
+-- hackero lint error cause not using stack, but compiles just fine
+import Geometry
+
 -- total list of modules in standard library:
 -- https://downloads.haskell.org/~ghc/latest/docs/html/libraries/
 
@@ -65,3 +73,66 @@ splitThisListBaby = partition (>3) [1,3,5,6,3,2,1,0,3,7]
 -- find returns a Maybe with the first occurence of elemenet satisfying predicate
 fourQuestionMark = find (>4) [1,2,3,4,5,6]  
 -- Just 5
+
+
+-- operations on characters
+_ = all isAlphaNum "dankmemes69" -- true
+_ = all isAlpha "dankmemes69" -- false
+
+-- getting a category from a character
+returnsUppercaseLetter = generalCategory 'A'
+
+_ = map digitToInt "12345" --runtime error if not [0..9] or [aA..fF]
+
+
+-- encoding using character codes
+encode :: Int -> String -> String  
+encode shift msg = 
+    let ords = map ord msg  
+        shifted = map (+ shift) ords  
+    in  map chr shifted  
+
+_ = encode 3 "Heeeeey"  
+-- "Khhhhh|"
+
+-- decode using the encode function
+decode :: Int -> String -> String  
+decode shift msg = encode (negate shift) msg  
+
+-- operations on maps
+
+-- map initialization
+
+-- maps are merely lists of tuples
+phoneBook =   
+    [("betty","555-2938")  
+    ,("bonnie","452-2928")  
+    ,("patsy","493-2928")  
+    ,("lucille","205-2928")  
+    ,("wendy","939-8282")  
+    ,("penny","853-2492")  
+        ]  
+
+findFromKey key xs = snd . head . filter (\(k,v) -> key == k) $ xs
+{-  *Main> findFromKey "betty" phoneBook
+    "555-2938" -}
+
+-- actual map representation
+mapPhoneBook = Map.fromList phoneBook
+
+-- using sets 
+text1 = "I just had an anime dream. Anime... Reality... Are they so different?"  
+text2 = "The old man left his garbage can out and now his trash is all over my lawn!" 
+
+set1 = Set.fromList text1
+set2 = Set.fromList text2
+
+-- now we have standard set operations available
+_ = Set.intersection set1 set2
+-- fromList " adefhilmnorstuy"  
+
+_ = Set.union set1 set2  
+--  fromList" !.?AIRTabcdefghijlmnorstuvwy"  
+
+-- #### MAKING MODULES #### 
+-- see file Geometry.hs

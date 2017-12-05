@@ -50,7 +50,7 @@ someCar = Car {model="Mustang", company="Ford", year=1967}
 -- type constructors :: eg. Maybe implementation
 -- here maybe can not be on its own
 -- Notice 'a' on left side of equals
-data Maybe a = Nothing | Just a 
+-- data Maybe a = Nothing | Just a 
 
 
 -- DON'T USE TYPE CONSTRAINTS IN DATA DECLARATIONS
@@ -68,3 +68,35 @@ vectMult :: (Num t) => Vector t -> t -> Vector t
   
 scalarMult :: (Num t) => Vector t -> Vector t -> t  
 (Vector i j k) `scalarMult` (Vector l m n) = i*l + j*m + k*n  
+
+-- Derived instances
+-- This can only derive from Eq since both fields are in Eq
+data Truck = Truck { name :: String  
+                   , color :: String  
+                   } deriving (Show,Eq,Read)  
+
+-- When using read in a context where type can be inferred, no declaration needed
+truth = 1 == read "1"
+
+-- When it cannot be inferred, be explicit
+bigtruck = read "Truck {name =\"Dr. Huge Truck\", color=\"Big Red\"}" :: Truck
+
+-- Nothing is smaller than any just
+-- however when comparing Just with Just, their innards are compared
+nothingIsTiny = Nothing < Just (-49999)
+
+-- Typeclasses are crazy - because no Day takes params, derive Enum.
+-- Since it's ordered (increaseing value of declaration) we can also derive Bounded
+-- ghci> minBound :: Day
+-- Monday
+-- ghci> succ Monday
+-- Tuesday
+-- ghci> [Thursday .. Sunday]
+-- [Thursday,Friday,Saturday,Sunday]
+data Day = Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday   
+           deriving (Eq, Ord, Show, Read, Bounded, Enum)
+
+-- Type synonyms
+type PhoneNumber = String  
+type Name = String  
+type PhoneBook = [(Name,PhoneNumber)]  

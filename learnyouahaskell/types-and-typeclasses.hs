@@ -1,6 +1,6 @@
 import qualified Data.Map as Map
 -- definition of bool from standard library
-data Bool = False | True
+data Bool' = False' | True'
 
 
 -- defining a shape of Circle | Rectangle
@@ -137,8 +137,7 @@ lockers = Map.fromList
     ]
 
 -- Recursive data structures (Algebraic data types)
-data List' a = Empty' | Cons a (List a) deriving (Show, Read, Eq, Ord)
-
+data List' a = Empty' | Cons a (List' a) deriving (Show, Read, Eq, Ord)
 someList = 5 `Cons` Empty'
 
 -- We can define infix functions by using only special characters.
@@ -155,3 +154,56 @@ Empty .++ ys = ys
 (x :-: xs) .++ ys = x :-: (xs .++ ys)
 
 -- Binary search tree
+data Tree a = EmptyTree | Node a (Tree a) (Tree a) deriving (Show, Read, Eq)
+
+singleton :: a -> Tree a
+singleton x = Node x EmptyTree EmptyTree
+
+treeInsert :: (Ord a) => a -> Tree a -> Tree a
+treeInsert x EmptyTree = singleton x
+treeInsert x (Node a left right)
+    | x == a = Node x left right
+    | x < a  = Node a (treeInsert x left) right
+    | x > a  = Node a left (treeInsert x right)
+
+treeContains :: (Ord a) => a -> Tree a -> Bool
+treeContains x EmptyTree = False
+treeContains x (Node a left right)
+    | x == a = True
+    | x < a  = treeContains x left
+    | x > a  = treeContains x right
+
+-- Building a tree with fold
+nums = [8,6,4,1,7,3,5]
+numsTree = foldr treeInsert EmptyTree nums
+
+-- Typeclasses 102
+-- Recap: typeclasses are like interfaces that define some behavior (eg. comparing for equality, order etc.)
+-- types that behave that way become instances of those typeclasses.
+--
+-- Because eq == and /= are defined recursively in terms of eachother,
+-- we only have to overwrite one of them.
+data TrafficLight = Red | Yellow | Green
+instance Eq TrafficLight where
+    Red == Red = True
+    Green == Green = True
+    Yellow == Yellow = True
+    _ == _ = False
+
+-- Just deriving show would merely have interpreted constructor names as literals.
+instance Show TrafficLight where
+    show Red = "Red light"
+    show Yellow = "Yellow light"
+    show Green = "Green light"
+
+-- For type constructors , eg. non-concrete we do the follwing
+-- Notice how we need to add a type class constraint to be sure
+-- that m is in instance of Eq.
+-- instance (Eq m) => Eq (Maybe m) where
+--     Just x == Just y = x == y
+--     Nothing == Nothing = True
+--     _ == _ = False
+
+-- :info Maybe (-- use info to see what classes types are instances of --)
+
+-- A yes-no typeclass

@@ -207,3 +207,80 @@ instance Show TrafficLight where
 -- :info Maybe (-- use info to see what classes types are instances of --)
 
 -- A yes-no typeclass
+-- Javascript weak true/false
+class YesNo a where
+    yesno :: a -> Bool
+
+instance YesNo Int where
+    yesno 0 = False
+    yesno _ = True
+
+instance YesNo [a] where
+    yesno [] = False
+    yesno _ = True
+
+instance YesNo Bool where
+    yesno = id
+
+instance YesNo (Maybe a) where
+    yesno (Just _) = True
+    yesno Nothing = False
+
+instance YesNo (Tree a) where
+    yesno EmptyTree = False
+    yesno _ = True
+
+instance YesNo TrafficLight where
+    yesno Red = False
+    yesno _ = True
+
+yesnoIf :: (YesNo y) => y -> a -> a -> a
+yesnoIf yesnoVal yesResult noResult = if yesno yesnoVal then yesResult else noResult
+
+-- The Functor typeclass
+-- implementation:
+class Functor f where
+    fmap :: (a -> b) -> f a -> f b
+
+-- Reminder, Maybe Int is a concrete type, but Maybe is a type constructor that
+-- takes one argument.
+
+-- map's type signature:
+-- map :: (a -> b) -> [a] -> [b]
+--
+-- Lists are instances of the functor typeclass the following way:
+-- instance Functor [] where
+--     fmap = map
+--
+-- How Maybe is an instance of Functor
+-- instance Functor Maybe where
+--     fmap f (Just x) = Just (f x)
+--     fmap f Nothing = Nothing
+--
+-- How Tree is an instance
+--     instance Functor Tree where
+--        fmap f EmptyTree = EmptyTree
+--        fmap f (Node x leftsub rightsub) = Node (f x) (fmap f leftsub) (fmap f rightsub)
+--
+-- Either's membership in Functor
+-- - notice how it gives a, as a function is expected to be a type constructor
+--   with one parameter:
+--
+--    instance Functor (Either a) where
+--        fmap f (Right x) = Right (f x)
+--        fmap f (Left x) = Left x
+--
+
+-- Kinds and some type-foo
+--
+-- A kind is the type of the type :)
+--
+-- :k Int
+-- Int :: *
+-- This means int is a concrete type
+--
+-- :k Maybe
+-- Maybe :: * -> *
+-- Means Maybe is a type constructor that takes one concrete type and produces a concrete type.o
+--
+-- Types that want to be functors should have type * -> *

@@ -1,4 +1,6 @@
+import System.IO
 import Data.Char
+import Control.Monad
 -- main :: IO ()
 -- main = putStrLn "hello, world"
 
@@ -105,7 +107,7 @@ main6 = do
 
 -- getChar, like getLine except it reads a single character thus returning IO Char
 -- - Interestingly here, giving input "hello sir" return, will print "hello".
-main = do
+main7 = do
     c <- getChar
     if c /= ' '
         then do
@@ -114,3 +116,86 @@ main = do
         else return ()
 
 -- The when function
+-- When is a function that takes a boolean and an I/O action.
+-- If the boolean is true, it returns the supplied I/O action, otherwise it returns ()
+main8 = do
+    c <- getChar
+    when (c /= ' ') $ do
+        putChar c
+        main
+
+-- We can sequence together I/O actions using the sequence function
+main9 = do
+    rs <- sequence [getLine, getLine, getLine]
+    print rs
+
+-- Mapping over something and sequencing the result is a common action,
+-- hence there is a special mapM for exactly this:
+print123 = mapM print [1,2,3]
+
+-- Above will additionally return the result of the I/O actions, meaning [(), (), ()]
+-- If we don't want the resulting list returned, we can use mapM_
+
+-- Instead of making our main funciton recursive, we can alternatively in some cases
+-- use the forever function as below:
+main10 = forever $ do
+    putStr "Give me some input: "
+    l <- getLine
+    putStrLn $ map toUpper l
+
+-- forM is mapM with parameters reversed which is more readable now and then
+
+-- Files and streams
+-- getContents :: IO String
+-- Lazily reads everything from STDIN until it encounters EOF character.
+--
+-- See scripts [capslocker.hs] and [shortLinesOnly.hs] for examples...
+--
+-- Files:
+--
+main11 = do
+    handle <- openFile "girlfriend.txt" ReadMode
+    contents <- hGetContents handle
+    putStr contents
+    hClose handle
+
+-- openFile :: FilePath -> IOMode -> IO Handle
+-- data IOMode = ReadMode | WriteMode | AppendMode | ReadWriteMode
+-- hGetContents is simply getContents on handles, naturally lazily
+-- NOTE: we have to close the file handle ourselves with hClose
+--
+-- A more concise way of doing the above is using:
+-- withFile :: FilePath -> IOMode -> (Handle -> IO a) -> IO a
+-- which is similar to open with in Python
+main12 = do
+    withFile "girlfriend.txt" ReadMode (\handle -> do
+        contents <- hGetContents handle
+        putStr contents)
+
+-- there are h-versions of most of the I/O functions we've seen
+-- hGetLine, hPutStr, hPutStrLn, hGetChar
+-- They take an additional handle as parameter and operate on that handle's file instead
+--
+-- readFile will close files for us automatically and is quite concise:
+main13 = do
+    contents <- readFile "girlfriend.txt"
+    putStr contents
+
+-- read a file, capitalize the contents and make a new file with the capitalized contents
+main14 = do
+    contents <- readFile "girlfriend.txt"
+    writeFile "girlfriendcaps.txt" (map toUpper contents)
+
+-- appending to existing files
+main15 = do
+    todoItem <- getLine
+    appendFile "todo.txt" (todoItem ++ "\n")
+
+-- reading by chunks as alternative to default line by life buffering
+-- the Maybe Int is the chunk size - if nothing is given,
+-- the OS will determine the buffer size
+main16 = do
+    withFile "something.txt" ReadMode (\handle -> do
+        hSetBuffering handle $ BlockBuffering (Just 2048)
+        contents <- hGetContents handle
+        putStr contents)

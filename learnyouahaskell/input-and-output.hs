@@ -1,4 +1,6 @@
 import System.IO
+import System.Environment
+import Data.List
 import Data.Char
 import Control.Monad
 -- main :: IO ()
@@ -199,3 +201,16 @@ main16 = do
         hSetBuffering handle $ BlockBuffering (Just 2048)
         contents <- hGetContents handle
         putStr contents)
+
+-- See ../scripts/todoManager.hs for a 'full' example on handling an existing file.
+--
+-- Command line arguments:
+-- Utlize useful funcitons from System.Environment
+-- for handling command line arguments
+main17 = do
+   args <- getArgs
+   progName <- getProgName
+   putStrLn "The arguments are:"
+   mapM_ putStrLn args
+   putStrLn "The program name is:"
+   putStrLn progName
